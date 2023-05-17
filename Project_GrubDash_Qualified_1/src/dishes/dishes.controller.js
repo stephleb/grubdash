@@ -1,12 +1,9 @@
 const path = require("path");
 
-// Using the existing dishes data
 const dishes = require(path.resolve("src/data/dishes-data"));
 
-// Using this function to assign ID's when necessary
 const nextId = require("../utils/nextId");
 
-// Validation Functions for Create and Update functions:
 function bodyHasNameProperty(req, res, next) {
   const { data = {} } = req.body;
 
@@ -16,7 +13,6 @@ function bodyHasNameProperty(req, res, next) {
       message: "Dish must include a name.",
     });
   }
-  // Passing the reqest body data to the next middleware/handler functions using "response.locals"
   res.locals.reqBody = data;
   return next();
 }

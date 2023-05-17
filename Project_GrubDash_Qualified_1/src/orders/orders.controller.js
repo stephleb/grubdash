@@ -1,12 +1,9 @@
 const path = require("path");
 
-// Using the existing order data
 const orders = require(path.resolve("src/data/orders-data"));
 
-// Using this function to assigh ID's when necessary
 const nextId = require("../utils/nextId");
 
-// Validation Functions for POST and PUT requests:
 function bodyHasDeliverToProperty(req, res, next) {
   const { data = {} } = req.body;
 
@@ -16,7 +13,7 @@ function bodyHasDeliverToProperty(req, res, next) {
       message: "Order must include a deliverTo property.",
     });
   }
-  // Passing the reqest body data to the next middleware/handler functions using "response.locals"
+  
   res.locals.reqBody = data;
   return next();
 }
@@ -66,11 +63,9 @@ function bodyHasDishQuantityProperty(req, res, next) {
   );
 
   if (!indexesOfDishesWithoutQuantityProperty.length) {
-    // All dishes have the right quantity property
     return next();
   }
 
-  // If there are dishes without the right quantity property, the following code will run:
   if (indexesOfDishesWithoutQuantityProperty.length > 1) {
     const stringOfDishIndex = indexesOfDishesWithoutQuantityProperty.join(", ");
 
@@ -93,7 +88,6 @@ function orderExists(req, res, next) {
 
   if (foundOrder) {
     res.locals.order = foundOrder;
-    // Passing the req route parameter, :orderId, to the next middleware/handler functions using "response.locals"
     res.locals.orderId = orderId;
     return next();
   }
@@ -104,12 +98,10 @@ function orderExists(req, res, next) {
   });
 }
 
-// Validation Functions for PUT request/Update function:
 function bodyIdMatchesRouteId(req, res, next) {
   const orderId = res.locals.orderId;
   const reqBody = res.locals.reqBody;
 
-  // The id property is not required in the body of the request, but if it is present it must match :orderId from the route
   if (reqBody.id) {
     if (reqBody.id === orderId) {
       return next();
@@ -144,7 +136,6 @@ function bodyHasStatusProperty(req, res, next) {
   return next();
 }
 
-// Validation Function for Delete request:
 function orderStatusIsPending(req, res, next) {
   const order = res.locals.order;
 
@@ -158,7 +149,6 @@ function orderStatusIsPending(req, res, next) {
   return next();
 }
 
-// Route Handlers:
 function destroy(req, res) {
   const orderId = res.locals.orderId;
   const orderIndex = orders.findIndex((order) => order.id === orderId);
@@ -170,13 +160,10 @@ function update(req, res) {
   const reqBody = res.locals.reqBody;
   const order = res.locals.order;
 
-  // Creating array of property names
   const existingOrderProperties = Object.getOwnPropertyNames(order);
 
   for (let i = 0; i < existingOrderProperties.length; i++) {
-    // Accessing each order object key within the array
     let propName = existingOrderProperties[i];
-    // Updating each value if there is a difference between the existing order and the req body order
     if (propName !== "id" && order[propName] !== reqBody[propName]) {
       order[propName] = reqBody[propName];
     }
